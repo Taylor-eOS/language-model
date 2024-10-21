@@ -1,6 +1,6 @@
+import os
 from transformers import GPTNeoXForCausalLM, GPTNeoXTokenizerFast, Trainer, TrainingArguments, DataCollatorForLanguageModeling
 from datasets import Dataset
-import os
 
 def load_texts(data_dir):
     texts = []
@@ -14,11 +14,11 @@ def load_texts(data_dir):
     return texts
 
 def main():
-    data_dir = 'my_dataset/train'  
+    data_dir = 'train'
     model_name = 'EleutherAI/gpt-neox-20b'
-    output_dir = 'gpt-output'
+    output_dir = 'output'
     num_train_epochs = 5
-    per_device_train_batch_size = 1  
+    per_device_train_batch_size = 1
     per_device_eval_batch_size = 1
     learning_rate = 5e-5
     max_seq_length = 2048

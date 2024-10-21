@@ -40,11 +40,11 @@ def extract_text_from_epub(epub_path, output_folder):
         output_file.write(full_text)
 
     shutil.rmtree(temp_dir)
-    print(f"Extracted clean text from: {epub_filename}")
+    print(f"Extracted text from: {epub_filename}")
 
 def main():
-    epub_folder = "."
-    output_folder = "./extracted_text"
+    epub_folder = input('Input folder:')
+    output_folder = "./train"
     os.makedirs(output_folder, exist_ok=True)
     epub_files = [os.path.join(epub_folder, f) for f in os.listdir(epub_folder) if f.endswith('.epub')]
     
