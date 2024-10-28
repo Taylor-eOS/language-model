@@ -2,3 +2,4 @@ beautifulsoup4
 transformers
 datasets
 torch
+protobuf

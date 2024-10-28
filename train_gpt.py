@@ -1,5 +1,5 @@
 import os
-from transformers import GPTNeoXForCausalLM, GPTNeoXTokenizerFast, Trainer, TrainingArguments, DataCollatorForLanguageModeling
+from transformers import GPTNeoForCausalLM, GPT2TokenizerFast, Trainer, TrainingArguments, DataCollatorForLanguageModeling
 from datasets import Dataset
 
 def load_texts(data_dir):
@@ -15,9 +15,9 @@ def load_texts(data_dir):
 
 def main():
     data_dir = 'train'
-    model_name = 'EleutherAI/gpt-neox-20b'
+    model_name = 'EleutherAI/gpt-neo-1.3B'  # Updated to GPT-Neo 1.3B
     output_dir = 'output'
-    num_train_epochs = 5
+    num_train_epochs = 1
     per_device_train_batch_size = 1
     per_device_eval_batch_size = 1
     learning_rate = 5e-5
@@ -25,7 +25,6 @@ def main():
 
     print("Loading data...")
     texts = load_texts(data_dir)
-
     if len(texts) == 0:
         raise ValueError(f"No data found in {data_dir}. Please check your dataset.")
     else:
@@ -34,7 +33,7 @@ def main():
     dataset = Dataset.from_dict({"text": texts})
 
     print("Initializing tokenizer...")
-    tokenizer = GPTNeoXTokenizerFast.from_pretrained(model_name, use_fast=True)
+    tokenizer = GPT2TokenizerFast.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
 
     print("Tokenizing data...")
@@ -43,14 +42,13 @@ def main():
         return tokens
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True, remove_columns=["text"])
-
     if len(tokenized_dataset) == 0:
         raise ValueError("Tokenization resulted in an empty dataset. Please check your tokenization function.")
     else:
         print(f"Tokenized dataset has {len(tokenized_dataset)} samples")
 
     print("Loading pre-trained model...")
-    model = GPTNeoXForCausalLM.from_pretrained(model_name)
+    model = GPTNeoForCausalLM.from_pretrained(model_name)
 
     training_args = TrainingArguments(
         output_dir=output_dir,
@@ -74,6 +72,7 @@ def main():
         eval_dataset=tokenized_dataset,
         data_collator=data_collator,
     )
+
     trainer.train()
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
